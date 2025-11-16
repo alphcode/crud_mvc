@@ -3,8 +3,7 @@
 namespace App\Controller;
 
 use App\Model\HomeModel;
-use EasyProjects\SimpleRouter\Request as Request;
-use EasyProjects\SimpleRouter\Response as Response;
+use EasyProjects\SimpleRouter\Router;
 
 class HomeController
 {
@@ -19,18 +18,18 @@ class HomeController
         view('create');
     }
 
-    public function store(Request $request, Response $response){
+    public function store(){
 
-        $client = (array)$request->body;
-        $url_img_profile = saveFile((array)$request->files->file,'assets/img/',["jpg", "jpeg", "png", "gif", "PNG", "JPG", "JPEG"]);
+        $client = (array)Router::$request->body;
+        $url_img_profile = saveFile((array)Router::$request->files->file,'assets/img/',["jpg", "jpeg", "png", "gif", "PNG", "JPG", "JPEG"]);
         $HomeModel = new HomeModel();
-        ($HomeModel->insertContact($client,$url_img_profile)) ? $response->status(200)->send(['data' => 'It was inserted the contact successfully'])
-                                                                : $response->status(400)->send(['data' => 'Error inserting data']);
+        ($HomeModel->insertContact($client,$url_img_profile)) ? Router::$response->status(200)->send(['data' => 'It was inserted the contact successfully'])
+                                                                : Router::$response->status(400)->send(['data' => 'Error inserting data']);
     }
 
-    public function destroy(Request $request, Response $response){
+    public function destroy(){
 
-        $id_contact = $request->params->id;
+        $id_contact = Router::$request->params->id;
         $homeModel = new HomeModel();
         $img = $homeModel->getContactImg($id_contact)[0]['coct_url_img_profile'];
 
@@ -38,29 +37,29 @@ class HomeController
             if(!empty($img)){
                 unlink('assets/img/'.$img);
             }
-            $response->status(200)->send(['data' => 'The contact was deleted successfully']);
+            Router::$response->status(200)->send(['data' => 'The contact was deleted successfully']);
         }
-        $response->status(400)->send(['Error deleting the contact']);
+        Router::$response->status(400)->send(['Error deleting the contact']);
     }
 
-    public function edit(Request $request){
+    public function edit(){
 
-        $data['id_contact'] = $request->params->id;
+        $data['id_contact'] = Router::$request->params->id;
 
         $homeModel = new HomeModel();
-        $data['contact'] = $homeModel->getContact($request->params->id);
+        $data['contact'] = $homeModel->getContact(Router::$request->params->id);
         view('edit',$data);
     }
 
-    public function update(Request $request, Response $response){
+    public function update(){
 
-        $id_client = $request->params->id;
-        $contact = (array)$request->body;
+        $id_client = Router::$request->params->id;
+        $contact = (array)Router::$request->body;
 
         $homeModel = new HomeModel();
 
-        ($homeModel->editCliente($contact,$id_client)) ? $response->status(200)->send(['data' => 'It was inserted the contact successfully'])
-            : $response->status(400)->send(['data' => 'Error inserting data']);
+        ($homeModel->editCliente($contact,$id_client)) ? Router::$response->status(200)->send(['data' => 'It was inserted the contact successfully'])
+            : Router::$response->status(400)->send(['data' => 'Error inserting data']);
     }
 
 }
