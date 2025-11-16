@@ -15,7 +15,8 @@
         ]
     },
     "require": {
-        "easy-projects/simple-router": "^7.3",
-      "ext-pdo": "*"
+        "php": ">=8.0",
+        "easy-projects/simple-router": "^7.6",
+        "ext-pdo": "*"
     }
 }
